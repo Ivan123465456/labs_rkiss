@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Function definition expression</title>
+</head>
+<body>
+    <p id="demo">232</p>
+    <script>
+        function map(f, a) {
+            var result = [],
+            i;
+            for (i=0; i!=a.length; i++) result[i] = f(a[i]);
+            return result;
+        }
+        document.getElementById("demo").innerHTML=map
+    </script>
+</body>
+</html>

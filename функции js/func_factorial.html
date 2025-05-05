@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Function definition expression</title>
+</head>
+<body>
+    <script>
+        <p id='demo' ></p>
+        var factorial = function factorial(n) {
+            return n < 2 ? 1 : n * fac(n-1);
+        }
+        console.log(factorial(3)); // получаем 6
+        document.getElementById('demo').innerHTML=factorial
+    </script>
+</body>
+</html>

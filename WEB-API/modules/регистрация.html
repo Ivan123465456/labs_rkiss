@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <style>
+        body {
+            background-color: rgba(194, 183, 183, 0.253);
+            overflow-y: hidden;
+            overflow-x: hidden;
+            height: 100vh; 
+            display: flex;
+            justify-content: center; 
+            align-items: center; 
+            margin: 0; 
+        }
+        .box {
+            text-align: left;
+            display: flex;
+            flex-direction: column; 
+            justify-content: center;
+            border: 2px solid white;
+            background-color: rgb(255, 255, 255);
+            padding: 20px; 
+            border-radius: 10px;
+            width: 600px; 
+            height: 560px;
+        }
+        .reg h1 {
+            font-size: 60px; 
+        }
+        .reg input {
+            width: 95%; 
+            padding: 10px;
+            margin-bottom: 15px; 
+        }
+        .reg button {
+            padding: 10px; 
+            margin: 20px 0; 
+            font-size: 18px; 
+        }  
+        .message {
+            margin-top: 10px;
+            font-size: 18px;
+            color: red; 
+        }    
+    </style>
+</head>
+<body>
+    <section class="box">
+        <div class="reg">
+            <h1>Регистрация</h1>
+            
+            <div class="registrate">
+            <label for="first_name">Имя:(обязательно)</label>
+            <input type="text" id="first_name" name="first_name" placeholder="Введите имя" required>
+
+            <label for="last_name">Фамилия:(обязательно)</label>
+            <input type="text" id="last_name" name="last_name" placeholder="Введите фамилию" required>
+
+            <label for="email">E-mail:(обязательно)</label>
+            <input type="email" id="email" name="email" placeholder="Введите почту" required>
+
+            <label for="password">Пароль:(обязательно)</label>
+            <input type="password" id="password" name="password" placeholder="Введите пароль" required>
+
+            <button id="zareg">Зарегистрироваться</button>
+            <button id="avto">Авторизация</button>
+
+            <div class="message" id="message"></div>
+        </div>
+        
+    </section>
+
+    <script src="js/reg.js">
+       
+    </script>
+</body>
+</html>

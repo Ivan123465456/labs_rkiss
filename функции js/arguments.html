@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>qwedwewe</h2>
+    <p id="demo">232323</p>
+    <script>
+        function myContent(separator) {
+            var result = "";
+            var i;
+
+            // Начинаем с 1, так как 0-ой аргумент - это separator
+            for (i = 1; i < arguments.length; i++) {
+                result += arguments[i] + separator;
+            }
+
+            // Удаляем последний separator
+            if (result.length > 0) {
+                result = result.slice(0, -separator.length);
+            }
+
+            return result;
+        }
+
+        // Вызов функции и отображение результата в элементе с id "demo"
+        var result = myContent(", ", "Apple", "Banana", "Cherry", "Date");
+        document.getElementById("demo").innerHTML = result;
+    </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <p id="demo">1we</p>
+    <script>
+        function outside(){
+            var x = 5;
+            function inside(x){
+                return x * 2;
+            }
+            return inside;
+        }
+
+        outside()(10);
+
+        document.getElementById("demo").innerHTML=outside
+    </script>
+
+</body>
+</html>

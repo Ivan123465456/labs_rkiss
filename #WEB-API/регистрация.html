@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>регистрация</title>
+    <style>
+        body {
+            background-color: rgba(194, 183, 183, 0.253);
+            overflow-y: hidden;
+            overflow-x: hidden;
+            height: 100vh; 
+            display: flex;
+            justify-content: center; 
+            align-items: center; 
+            margin: 0; 
+        }
+        .box {
+            text-align: left;
+            display: flex;
+            flex-direction: column; 
+            justify-content: center;
+            border: 2px solid white;
+            background-color: rgb(255, 255, 255);
+            padding: 20px; 
+            border-radius: 10px;
+            width: 600px; 
+            height: auto; 
+        }
+        .reg h1 {
+            font-size: 60px; 
+        }
+        .reg input {
+            width: 95%; 
+            padding: 10px;
+            margin-bottom: 15px; 
+        }
+        .reg button {
+            padding: 10px; 
+            margin: 20px 0; 
+            font-size: 18px; 
+        }  
+        .message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: green;
+        }    
+    </style>
+</head>
+<body>
+    <section class="box">
+        <div class="reg">
+            <h1>Регистрация</h1>
+            <h3>Имя:(обязательно)</h3>
+            <input type="text" name="ima" placeholder="Введите имя">
+            <h3>Фамилия:(обязательно)</h3>
+            <input type="text" name="fam" placeholder="Введите фамилию">
+            <h3>E-mail:(обязательно)</h3>
+            <input type="email" name="email" placeholder="Введите почту">
+            <h3>Пароль:(обязательно)</h3>
+            <input type="password" name="password" placeholder="Введите пароль">
+            <button id="zareg">Зарегистрироваться</button>
+            <div class="message" id="message"></div>
+        </div>
+    </section>
+
+    <script>
+        document.getElementById("zareg").addEventListener("click", function() {
+            var requst_data = new FormData();
+            requst_data.append('ima', document.querySelector('[name=ima]').value);
+            requst_data.append('fam', document.querySelector('[name=fam]').value);
+            requst_data.append('email', document.querySelector('[name=email]').value);
+            requst_data.append('password', document.querySelector('[name=password]').value);
+
+            var requst = new XMLHttpRequest();
+            var url = 'http://web-app.api-web-tech.local';
+            requst.open('POST', url, true);
+            requst.send(requst_data);
+            requst.onreadystatechange = function() {
+                if (requst.readyState === 4){
+                    if(requst.status === 403){
+                        document.querySelector('massage').textContent = "доступ запрещен 403";
+                    } else if (requst.status === 404){
+                        document.querySelector('massage').textContent = 'ресурс не найден 404';
+                    } else{
+                        document.getElementById('massage').textContent = requst.responseText;
+                    }
+                }
+               
+                }
+            }
+            
+
+
+          
+        });
+
+
+    </script>
+
+</body>
+</html>

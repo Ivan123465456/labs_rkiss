@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <style>
+          body {
+            background-color: rgba(194, 183, 183, 0.253);
+            overflow-y: hidden;
+            overflow-x: hidden;
+            height: 100vh; 
+            display: flex;
+            justify-content: center; 
+            align-items: center; 
+            margin: 0; 
+        }
+        .box {
+            text-align: left;
+            display: flex;
+            flex-direction: column; 
+            justify-content: center;
+            border: 2px solid white;
+            background-color: rgb(255, 255, 255);
+            padding: 20px; 
+            border-radius: 10px;
+            width: 600px; 
+        }
+        .reg h1 {
+            font-size: 60px; 
+        }
+        .reg input {
+            width: 95%; 
+            padding: 10px;
+            margin-bottom: 15px; 
+        }
+        .reg button {
+            padding: 10px; 
+            margin: 20px 0; 
+            font-size: 18px; 
+        }  
+        .message {
+            margin-top: 10px;
+            font-size: 18px;
+            color: red; 
+        }    
+    </style>
+</head>
+<body>
+    <section class="box">
+        <div class="reg">
+            <h1>Регистрация</h1>
+            
+            <label for="first_name">Имя:(обязательно)</label>
+            <input type="text" id="first_name" name="first_name" placeholder="Введите имя" required>
+
+            <label for="last_name">Фамилия:(обязательно)</label>
+            <input type="text" id="last_name" name="last_name" placeholder="Введите фамилию" required>
+
+            <label for="email">E-mail:(обязательно)</label>
+            <input type="email" id="email" name="email" placeholder="Введите почту" required>
+
+            <label for="password">Пароль:(обязательно)</label>
+            <input type="password" id="password" name="password" placeholder="Введите пароль" required>
+
+            <button id="zareg">Зарегистрироваться</button>
+            <button id="avto">Авторизация</button>
+
+            <div class="message" id="message"></div>
+        </div>
+    </section>
+
+    <script>
+        document.getElementById("zareg").addEventListener("click", function() {
+            
+           var name = document.querySelector('[name=first_name]').value.trim();
+           var surname = document.querySelector('[name=last_name]').value.trim();
+           var email = document.querySelector('[name=email]').value.trim();
+           var password = document.querySelector('[name=password]').value.trim();
+
+           document.getElementById('message').textContent = "";
+
+           if (!name || !surname || !email || !password) {
+                document.getElementById('message').textContent = "Пожалуйста, заполните все поля.";
+                return;
+           }
+
+           var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+           if (!emailPattern.test(email)) {
+               document.getElementById('message').textContent = "Пожалуйста, введите корректный адрес электронной почты.";
+               return;
+           }
+
+           checkEmailAvailability(email).then(isAvailable => {
+               if (!isAvailable) {
+                   document.getElementById('message').textContent = "Электронная почта уже занята.";
+                   return;
+               }
+
+           var requst_data = new FormData();
+           requst_data.append('first_name', name);
+           requst_data.append('last_name', surname);
+           requst_data.append('email', email);
+           requst_data.append('password', password);
+
+          var requst = new XMLHttpRequest();
+          var url = 'http://web-app.api-web-tech.local/registration'; 
+          requst.open('POST', url, true);
+          requst.send(requst_data);
+          requst.onreadystatechange = function() {
+              if (requst.readyState === XMLHttpRequest.DONE) {
+                  if(requst.status === 403){
+                      document.getElementById('message').textContent = "Доступ запрещен (403)";
+                  } else if (requst.status === 404){
+                      document.getElementById('message').textContent = 'Ресурс не найден (404)';
+                  } else if (requst.status == 422){
+                      document.getElementById('message').textContent = 'Запрос получен, но не может быть обработан (422).';
+                  } else if (requst.status === 200) {
+                      document.getElementById('message').textContent = "Регистрация успешна!";
+                  } else {
+                      document.getElementById('message').textContent = "Произошла ошибка. Пожалуйста, попробуйте позже.";
+                  }
+              }
+          };
+        });
+
+        document.getElementById("avto").addEventListener("click", function(){
+           alert('Ведутся работы');
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <style>
+        body {
+            background-color: rgba(194, 183, 183, 0.253);
+            overflow-y: hidden;
+            overflow-x: hidden;
+            height: 100vh; 
+            display: flex;
+            justify-content: center; 
+            align-items: center; 
+            margin: 0; 
+        }
+        .box {
+            text-align: left;
+            display: flex;
+            flex-direction: column; 
+            justify-content: center;
+            border: 2px solid white;
+            background-color: rgb(255, 255, 255);
+            padding: 20px; 
+            border-radius: 10px;
+            width: 600px; 
+            height: 560px;
+        }
+        .reg h1 {
+            font-size: 60px; 
+        }
+        .reg input {
+            width: 95%; 
+            padding: 10px;
+            margin-bottom: 15px; 
+        }
+        .reg button {
+            padding: 10px; 
+            margin: 20px 0; 
+            font-size: 18px; 
+        }  
+        .message {
+            margin-top: 10px;
+            font-size: 18px;
+            color: red; 
+        }    
+    </style>
+</head>
+<body>
+    <section class="box">
+        <div class="reg">
+            <h1>Регистрация</h1>
+            
+            <label for="first_name">Имя:(обязательно)</label>
+            <input type="text" id="first_name" name="first_name" placeholder="Введите имя" required>
+
+            <label for="last_name">Фамилия:(обязательно)</label>
+            <input type="text" id="last_name" name="last_name" placeholder="Введите фамилию" required>
+
+            <label for="email">E-mail:(обязательно)</label>
+            <input type="email" id="email" name="email" placeholder="Введите почту" required>
+
+            <label for="password">Пароль:(обязательно)</label>
+            <input type="password" id="password" name="password" placeholder="Введите пароль" required>
+
+            <button id="zareg">Зарегистрироваться</button>
+            <button id="avto">Авторизация</button>
+
+            <div class="message" id="message"></div>
+        </div>
+    </section>
+
+    <script>
+        document.getElementById("zareg").addEventListener("click", function() {
+            var name = document.querySelector('[name=first_name]').value.trim();
+            var surname = document.querySelector('[name=last_name]').value.trim();
+            var email = document.querySelector('[name=email]').value.trim();
+            var password = document.querySelector('[name=password]').value.trim();
+
+            document.getElementById('message').textContent = "";
+
+          
+            if (!name || !surname || !email || !password) {
+                document.getElementById('message').textContent = "Пожалуйста, заполните все поля.";
+                return;
+            }
+
+   
+            var emailPattern = /^[^\s@]+s@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                document.getElementById('message').textContent = "Пожалуйста, введите корректный адрес электронной почты.";
+                return;
+            }
+
+            
+            if (password.length < 6) {
+                document.getElementById('message').textContent = "Пароль должен содержать минимум 6 символов.";
+                return;
+            }
+
+            var request_data = new FormData();
+            request_data.append('first_name', name);
+            request_data.append('last_name', surname);
+            request_data.append('email', email);
+            request_data.append('password', password);
+
+            var request = new XMLHttpRequest();
+            var url = 'http://web-app.api-web-tech.local/registration'; 
+            request.open('POST', url, true);
+            request.send(request_data);
+            
+            request.onreadystatechange = function() {
+                if (request.readyState === XMLHttpRequest.DONE) {
+                    if(request.status === 403){
+                        document.getElementById('message').textContent = "Доступ запрещен (403)";
+                    }
+                    else if (request.status === 404){
+                        document.getElementById('message').textContent = 'Ресурс не найден (404)';
+                    } else if (request.status == 422){
+                        try {
+                            var response = JSON.parse(request.responseText);
+                            document.getElementById('message').textContent = response.message = 'Ошибка валидации данных';
+                        } catch (e) {
+                            document.getElementById('message').textContent = 'Ошибка обработки запроса';
+                        }
+                    } else if (request.status === 200) {
+                        document.getElementById('message').textContent = "Регистрация успешна!";
+                       
+                    } else {
+                        document.getElementById('message').textContent = "Произошла ошибка. Пожалуйста, попробуйте позже.";
+                    }
+                }
+            };
+        });
+
+        document.getElementById("avto").addEventListener("click", function() {
+         
+            window.location.href = 'login.html';
+            
+           
+            
+            document.querySelector('h1').textContent = 'Авторизация';
+            document.getElementById('first_name').style.display = 'none';
+            document.getElementById('last_name').style.display = 'none';
+            document.getElementById('zareg').style.display = 'none';
+            document.getElementById('avto').textContent = 'Войти';
+            
+        });
+    </script>
+</body>
+</html>

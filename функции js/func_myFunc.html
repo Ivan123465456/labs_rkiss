@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Function declaration statement</title>
+</head>
+<body>
+    <script>
+        
+        function myFunc (theObject) {
+            theObject.make = "Toyota";
+        }
+
+        var mycar = { make: "Honda", model: "Accord", year: 1998};
+        var x, y;
+        x = mycar.make;
+
+        myFunc(mycar);
+        y = mycar.make;
+        console.log(y); // получаем 'Toyota'
+        
+    </script>
+</body>
+
+</html>
