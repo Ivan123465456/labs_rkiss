@@ -1,0 +1,177 @@
+var HOST = 'http://apiweb.api-web-tech.local';
+var TOKEN = localStorage.getItem('authToken') || '';
+var content = document.querySelector('.content');
+
+document.addEventListener('DOMContentLoaded', startApp);
+
+function startApp() {
+    var request = new XMLHttpRequest();
+    var url = './modules/auth.html';
+    request.open('GET', url, true); 
+    request.send();
+    request.onreadystatechange = function () {
+        if (request.readyState === 4) {
+            if (request.status === 200) {
+                content.innerHTML = request.responseText;
+                onLoadPageAuth();
+            }
+        }
+    };
+}
+
+// загрузка авторизации 
+function onLoadPageAuth() {
+    const authButton = document.getElementById('avto');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+
+    authButton.addEventListener('click', function () {
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        var req_data = new FormData();
+        req_data.append('email', email);
+        req_data.append('password', password);
+
+        var request = new XMLHttpRequest();
+        var url = `${HOST}/authorization`;
+        request.open('POST', url);
+
+        request.onreadystatechange = function () {
+            if (request.readyState === 4) {
+                if (request.status === 200) {
+                    try {
+                        TOKEN = JSON.parse(request.responseText).token;
+                        localStorage.setItem('authToken', TOKEN);
+
+                        // Загрузка страницы данных
+                        var dataRequest = new XMLHttpRequest();
+                        var dataUrl = './modules/data.html';
+                        dataRequest.open('GET', dataUrl, true);
+                        dataRequest.send();
+                        dataRequest.onreadystatechange = function () {
+                            if (dataRequest.readyState === 4 && dataRequest.status === 200) {
+                                content.innerHTML = dataRequest.responseText;
+                                onLoadPageData();
+                            }
+                        };
+                    } catch (e) {
+                        content.innerHTML = 'Ошибка обработки ответа сервера';
+                    }
+                } else if (request.status === 0) {
+                    content.innerHTML = 'Не удалось подключиться к серверу. Возможно, проблема с CORS.';
+                } else {
+                    content.innerHTML = 'Ошибка сервера: ' + request.status;
+                }
+            }
+        };
+
+        request.onerror = function () {
+            content.innerHTML = 'Ошибка сети при выполнении запроса';
+        };
+
+        request.send(req_data);
+    });
+}
+
+//загрузка data
+function onLoadPageData() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    const usersTable = document.getElementById('usersTable');
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', onClickLogout);
+    }
+
+    loadUsers();
+
+    function loadUsers() {
+        var request_data = new FormData();
+        request_data.append('token', TOKEN);
+        
+        var request = new XMLHttpRequest();        
+        var url = `${HOST}/data`;
+        request.open('POST', url);    
+        
+        request.onreadystatechange = function () {
+            if (request.readyState === 4) {
+                if (request.status === 200) {
+                    try {
+                        var users = JSON.parse(request.responseText);
+                        renderUsersTable(users);
+                    } catch (e) {
+                        content.innerHTML = 'Ошибка обработки данных';
+                    }
+                } else if (request.status === 401) {
+                    TOKEN = '';
+                    localStorage.removeItem('authToken');
+                    startApp();
+                } else {
+                    content.innerHTML = 'Ошибка сервера: ' + request.status;
+                }
+            }
+        };
+
+        request.send(request_data);
+    }
+
+    //таблица
+    function makeTableCell(content) { 
+        let cell = document.createElement('td');
+        cell.textContent = content;
+        return cell;
+    }
+
+    function renderUsersTable(data) { 
+        let tbody = document.querySelector('.spisok table tbody'); 
+        if (!tbody) return;
+        
+        tbody.innerHTML = '';
+
+        data.forEach(element => {
+            let row = document.createElement('tr');
+
+            row.append(makeTableCell(element._id || '')); 
+            row.append(makeTableCell(element.balance || ''));
+            row.append(makeTableCell(element.picture || ''));
+            row.append(makeTableCell(element.age || ''));
+            row.append(makeTableCell(element.eyeColor || ''));
+            row.append(makeTableCell(element.name || ''));
+            row.append(makeTableCell(element.gender || ''));
+            row.append(makeTableCell(element.company || ''));
+            row.append(makeTableCell(element.email || ''));
+            row.append(makeTableCell(element.phone || ''));
+            row.append(makeTableCell(element.address || ''));
+            row.append(makeTableCell(element.registered || ''));
+            row.append(makeTableCell(element.favoriteFruit || ''));
+
+            tbody.append(row);
+        });
+    }
+    
+    function onClickLogout() { 
+        let request = new XMLHttpRequest();
+        let url = `${HOST}/logout`;
+        request.open('POST', url, true);
+        
+        
+        let req_data = new FormData();
+        req_data.append('token', TOKEN);
+        
+        request.send(req_data);
+        
+        request.onreadystatechange = function() {
+            if (request.readyState == 4) {
+                if (request.status == 200) {
+                    TOKEN = '';
+                    localStorage.removeItem('authToken');
+                    startApp();
+                }
+                if (request.status == 401) {
+                    let response = JSON.parse(request.responseText);
+                    alert(response.message); 
+                }
+            }
+        };
+    }
+}
